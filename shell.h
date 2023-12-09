@@ -20,6 +20,7 @@
 #define EXIT_COMMAND 1
 #define MAX_CONVERSION_BUFFER 20
 #define BUFFER_SIZE 128
+#define _GNU_SOURCE
 
 
 /*FUNCTION DECLARATIONS */
@@ -29,7 +30,7 @@ int print_command_not_found_error(char *argument, char *shell_name, int line_num
 int switch_string(char **dest, char **source);
 int free_string_array(char **str_array);
 int check_custom_builtin(char **args, char *shell_name, int command_line, int *error_code);
-void custom_perror_exit(char *arg, char *shell, int line);
+void _perror_exit(char *arg, char *shell, int line);
 int env_index(const char *name);
 char *_getenv(const char *name);
 bool allocate_memory_for_environ(void);
@@ -39,13 +40,34 @@ char *_strdup(const char *str);
 int _numlen(int n);
 void free_environ();
 int main(int argc, char *argv[]);
-int custom_setenv(const char *name, const char *value);
-int custom_unsetenv(const char *name);
-int custom_printenv(void);
+int _setenv(const char *name, const char *value);
+int _unsetenv(const char *name);
+int _printenv(void);
 char *str_concat(char *, char *);
-char *_itoa(int, char*, int);
+/**char *_itoa(int, char*, int);*/
 size_t _strlen(const char *s);
 int _strncmp(const char *s1, const char *s2, size_t n);
 int _printenv(void);
-
+void *_realloc(void *ptr, size_t old_size, size_t new_size);
+void *_reallocf(void *ptr, size_t old_size, size_t new_size);
+char **malloc_array(char **arr);
+int _setenv(const char *name, const char *value);
+int _unsetenv(const char *name);
+int _strcmp(char *s1, char *s2);
+char *str_concat(char *s1, char *s2);
+/**char *_strcpy(char *dest, char *src);*/
+/**char *_strdup(char *str);*/
+/**int _strlen(const char *str);*/
+int empty_path(char *path);
+int slash_sps(char *str);
+char *cmd_path(char *cmd, char *path);
+char *cmd_cwd(char *cmd);
+int _getline(char *shell);
+char **strtok_array(const char *str, const char *del);
+int word_counter(const char *str, const char *del);
+int parents_forking(char **args, char *shell, int line);
+void path_checker(char **args);
+void string_switch(char **str1, char **str2);
+void free_array(char **arr);
+void perror_notfound(const char *command, const char *shell, int line);
 #endif /* SHELL_H */

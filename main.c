@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 			break;
 		}
 
-		if (strcmp(line, "exit\n") == 0)
+		if (_strncmp(line, "exit\n", strlen("exit\n")) == 0)
 		{
 			break;
 		}

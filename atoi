@@ -1,12 +1,12 @@
-#include "shell.h"
-/**
+/**#include "shell.h"
+**
  * _atoi - converts a string
  * @s: The string
  *
  * Return: The converted int
  */
 
-int _atoi(char *s)
+/**int _atoi(char *s)
 {
 	int sign = 1;
 	int output = 0;
@@ -68,3 +68,4 @@ int _atoi(char *s)
 	}
 	return ((int)output * sign);
 }
+*/

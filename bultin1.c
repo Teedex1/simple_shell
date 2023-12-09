@@ -19,35 +19,35 @@ int check_custom_builtin(char **args, char *shell_name, int command_line, int *e
 		return (3);
 	}
 	
-	if (!strcmp(args[0], "custom_setenv"))
+	if (!strcmp(args[0], "_setenv"))
 	{
 		if (!args[1] || !args[2])
 		{
 			*error_code = 2;
-			custom_perror_exit(args[0], shell_name, command_line);
+			_perror_exit(args[0], shell_name, command_line);
 			return (3);
 		}
-		if (custom_setenv(strdup(args[1]), strdup(args[2])) == -1)
+		if (_setenv(strdup(args[1]), strdup(args[2])) == -1)
 		{
 			*error_code = 2;
-			custom_perror_exit(args[0], shell_name, command_line);
+			_perror_exit(args[0], shell_name, command_line);
 			return (3);
 		}
 		return (2);
 	}
-	else if (!strcmp(args[0], "custom_unsetenv"))
+	else if (!strcmp(args[0], "_unsetenv"))
 	{
 		if (!args[1])
 		{
 			*error_code = 2;
-			custom_perror_exit(args[0], shell_name, command_line);
+			_perror_exit(args[0], shell_name, command_line);
 			return (3);
 		}
 		
-		else if (custom_unsetenv(args[1]) == -1)
+		else if (_unsetenv(args[1]) == -1)
 		{
 			*error_code = 2;
-			custom_perror_exit(args[0], shell_name, command_line);
+			_perror_exit(args[0], shell_name, command_line);
 			return (3);
 		}
 		
@@ -66,7 +66,7 @@ int check_custom_builtin(char **args, char *shell_name, int command_line, int *e
 			if(*endptr != '\0' || number < INT_MIN || number > INT_MAX)
 			{
 				*error_code = 2;
-				custom_perror_exit(args[0], shell_name, command_line);
+				_perror_exit(args[0], shell_name, command_line);
 				return (3);
 			}
 			*error_code = (int)number;
@@ -85,7 +85,7 @@ int check_custom_builtin(char **args, char *shell_name, int command_line, int *e
 			if (!isdigit(args[1][i]))
 			{
 				*error_code = 2;
-				custom_perror_exit(args[1], shell_name, command_line);
+				_perror_exit(args[1], shell_name, command_line);
 				return (3);
 			}
 		}
@@ -95,7 +95,7 @@ int check_custom_builtin(char **args, char *shell_name, int command_line, int *e
 		if (*endptr != '\0' || number > INT_MAX)
 		{
 			*error_code = 2;
-			custom_perror_exit(args[1], shell_name, command_line);
+			_perror_exit(args[1], shell_name, command_line);
 			return (3);
 		}
 		return (2);
@@ -103,13 +103,13 @@ int check_custom_builtin(char **args, char *shell_name, int command_line, int *e
 }
 
 /**
- * custom_perror_exit - prints an error message and exits
+ * _perror_exit - prints an error message and exits
  * @arg: arugment
  * @shell: shell
  * @line: line
  * Return: 0
  */
-void custom_perror_exit(char *arg, char *shell, int line)
+void _perror_exit(char *arg, char *shell, int line)
 {
 	char str_line[MAX_CONVERSION_BUFFER];
 	char *tmp1, *tmp2;
