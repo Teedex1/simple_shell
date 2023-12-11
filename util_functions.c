@@ -54,3 +54,21 @@ int print_command_not_found_error(char *argument, char *shell_name, int line_num
 
 	return (0);
 }
+
+size_t _numlen(int num)
+{
+	size_t len = 1;
+
+	if (num < 0)
+	{
+		len++;
+		num = -num;
+	}
+
+	while (num >= 10)
+	{
+		len++;
+		num /= 10;
+	}
+	return (len);
+}

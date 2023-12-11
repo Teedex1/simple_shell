@@ -5,15 +5,17 @@
  * @source: address of the string to place
  * Return: 0
  */
-int switch_string(char  **dest, char **source)
+int string_switch(char  **prev, char **tmp)
 {
-	if (*dest == NULL || *source == NULL)
+	free(*prev);
+	*prev = NULL;
+
+	*prev = _strdup(*tmp);
+	if (!*prev)
+	{
 		return (1);
-
-	free(*dest);
-	*dest = _strdup(*source);
-
-	return ((*dest == NULL) ? 1 : 0);
+	}
+	return (0);
 }
 
 /**
@@ -25,7 +27,7 @@ int free_string_array(char **str_array)
 {
 	int i;
 
-	if (str_array == NULL)
+	if (!str_array)
 		return (1);
 	for (i = 0; str_array[i] != NULL; i++)
 	{

@@ -7,124 +7,67 @@
  * @error_code: address of error
  * Return: 0
  */
-int check_custom_builtin(char **args, char *shell_name, int command_line, int *error_code)
+int builtin_checker(char **args, char *shell, int *errcode)
 {
 	int i;
-	/**char *command = args[0]; */
-	char *endptr;
-	long int number;
+	long int exit_code;
+	char error_msg[1024];
 
 	if (!args || !args[0])
 	{
 		return (3);
 	}
-	
-	if (!strcmp(args[0], "_setenv"))
+	if (strcmp(args[0], "setenv") == 0)
 	{
-		if (!args[1] || !args[2])
+		if (!args[1] || _setenv(args[1], args[2]) == -1)
 		{
-			*error_code = 2;
-			_perror_exit(args[0], shell_name, command_line);
-			return (3);
-		}
-		if (_setenv(strdup(args[1]), strdup(args[2])) == -1)
-		{
-			*error_code = 2;
-			_perror_exit(args[0], shell_name, command_line);
+			perror("setenv");
 			return (3);
 		}
 		return (2);
 	}
-	else if (!strcmp(args[0], "_unsetenv"))
+
+	if (strcmp(args[0], "unsetenv") == 0)
+	{
+		if (!args[1] || _unsetenv(args[1]) == -1)
+		{
+			perror("unsetenv");
+			return (3);
+		}
+		return (2);
+	}
+	if (strcmp(args[0], "env") == 0)
+	{
+		return _printenv();
+	}
+	if (strcmp(args[0], "exit") == 0)
 	{
 		if (!args[1])
 		{
-			*error_code = 2;
-			_perror_exit(args[0], shell_name, command_line);
-			return (3);
+			return(1);
 		}
 		
-		else if (_unsetenv(args[1]) == -1)
+		for (i = 0; args[1][i]; ++i)
 		{
-			*error_code = 2;
-			_perror_exit(args[0], shell_name, command_line);
-			return (3);
-		}
-		
-		return (2);
-	}
-	
-	else if (!strcmp(args[0], "custom_env"))
-	{
-		return (_printenv());
-	}
-	else if (!strcmp(args[0], "custom_exit"))
-	{
-		if (args[1])
-		{
-			number = strtoll(args[1], &endptr, 10);
-			if(*endptr != '\0' || number < INT_MIN || number > INT_MAX)
+			if (!isdigit(args[1][i]) || i > 9)
 			{
-				*error_code = 2;
-				_perror_exit(args[0], shell_name, command_line);
-				return (3);
-			}
-			*error_code = (int)number;
-		}
-		return (0);
-	}
-	else
-	{
-		if (!args[1])
-		{
-			return (1);
-		}
-		
-		for (i = 0; args[1][i]; i++)
-		{
-			if (!isdigit(args[1][i]))
-			{
-				*error_code = 2;
-				_perror_exit(args[1], shell_name, command_line);
-				return (3);
+				snprintf(error_msg, sizeof(error_msg), "%s: exit: Illegal number: %s", shell, args[1]);
+		write(STDERR_FILENO, error_msg, strlen(error_msg));
+		*errcode = 2;
+		return (3);
 			}
 		}
 		
-		number = strtoll(args[1], &endptr, 10);
-		
-		if (*endptr != '\0' || number > INT_MAX)
+		exit_code = strtol(args[1], NULL, 10);
+		if (exit_code > INT_MAX)
 		{
-			*error_code = 2;
-			_perror_exit(args[1], shell_name, command_line);
+			snprintf(error_msg, sizeof(error_msg), "%s: exit: Number too large: %s", shell, args[1]);
+			write(STDERR_FILENO, error_msg, strlen(error_msg));
+			*errcode = 2;
 			return (3);
 		}
 		return (2);
 	}
+	return (0);
 }
 
-/**
- * _perror_exit - prints an error message and exits
- * @arg: arugment
- * @shell: shell
- * @line: line
- * Return: 0
- */
-void _perror_exit(char *arg, char *shell, int line)
-{
-	char str_line[MAX_CONVERSION_BUFFER];
-	char *tmp1, *tmp2;
-
-	tmp1 = str_concat(shell, ": ");
-	snprintf(str_line, sizeof(str_line), "%ld",(long)line);
-	tmp2 = str_concat(tmp1, str_line);
-	free(tmp1);
-	tmp1 = str_concat(tmp2, ": exit: ");
-	free(tmp2);
-	tmp2 = str_concat(tmp1, arg);
-	free(tmp1);
-	tmp1 = str_concat(tmp2, "\n");
-	free(tmp2);
-	fprintf(stderr, "%s", tmp1);
-	free(tmp1);
-	exit(1);
-}

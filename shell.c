@@ -79,7 +79,7 @@ int parent_forking(char **args, char *shell, int line)
 	{
 		if (stat(args[0], &st) == -1 || access(args[0], X_OK) == -1)
 		{
-			perror_notfound(args[0], shell, line);
+			 print_command_not_found_error(args[0], shell, line);
 			exit(127);
 		}
 
@@ -142,7 +142,7 @@ int word_counter(const char *str, const char *del)
  * @del: delimiter
  * Return: NULL
  */
-char **strtok_arr(const char *str, const char *del)
+char **strtok_array(const char *str, const char *del)
 {
 	char **arr;
 	char **tmp;
@@ -214,7 +214,7 @@ int _getline(char *shell)
 	while (1)
 	{
 		if (isatty(STDIN_FILENO))
-			write(STDOUT_FILENO, "s ", 2);
+			write(STDOUT_FILENO, "$ ", 2);
 
 		getlen = getline(&buf, &len, stdin);
 
@@ -226,7 +226,7 @@ int _getline(char *shell)
 
 		args = strtok_array(buf, " ");
 
-		check_exits = check_custom_builtin(args, shell, line, &errcode);
+		check_exits = builtin_checker(args, shell, &errcode);
 
 		if (check_exits == 2)
 		{
@@ -248,12 +248,13 @@ int _getline(char *shell)
 		{
 			break;
 		}
-
-	if (!isatty(STDIN_FILENO))
+		
+		if (!isatty(STDIN_FILENO))
 		{
 			line++;
 		}
 	}
+	
 	free_array(environ);
 	free(buf);
 
@@ -264,4 +265,16 @@ int _getline(char *shell)
 
 	return (errcode);
 }
+void free_array(char **arr)
+{
+	size_t i;
 
+	if (!arr)
+		return;
+
+	for (i = 0; arr[i] != NULL; i++)
+	{
+		free(arr[i]);
+	}
+	free(arr);
+}

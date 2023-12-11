@@ -1,9 +1,9 @@
 #include "shell.h"
 /**
- *
- *
- * ?
- *
+ * _unsetenv - to unset env
+ * @name: pointer  name
+ * 
+ * Return: 0
  *
  */
 int _unsetenv(const char *name)
@@ -17,7 +17,7 @@ int _unsetenv(const char *name)
 
 	while (environ[i])
 	{
-		if (strncmp(environ[i], name, strlen(name)) == 0 && environ[i][strlen(name)] == '=')
+		if (custom_strncmp(environ[i], name, strlen(name)) == 0 && environ[i][strlen(name)] == '=')
 		{
 			break;
 		}
@@ -25,21 +25,21 @@ int _unsetenv(const char *name)
 	}
 	if (!environ[i])
 	{
-		return (3);
+		return (1);
 	}
+
+	free(environ[i]);
 
 	for (; environ[i + 1]; i++)
 	{
 		environ[i] = environ[i + 1];
 	}
 
-	free(environ[i]);
-
 	environ = _reallocf(environ, sizeof(char *) * (i + 2), sizeof(char *) * (i + 1));
 	if (!environ)
 	{
 		return (-1);
 	}
-	return (3);
+	return (0);
 }
 

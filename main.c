@@ -1,12 +1,24 @@
 #include "shell.h"
 /**
+ * _handler - signal handler
+ *
+ * @sig:  signal number
+ *
+void _handler(int sig)
+{
+	(void)sig;
+
+	write(STDOUT_FILENO, "\n$ ", 3);
+}
+
+**
  * main - Entry point for the command line interpreter
  *
  * @argc: argument count
  * @argv: argument vector
  *
  * Return: 0
- */
+ *
 int main(int argc, char *argv[])
 {
 	char *line = NULL;
@@ -15,7 +27,6 @@ int main(int argc, char *argv[])
 	(void)argc;
 	(void)argv;
 
-	/** char *line = _getline(argv[0]); */
 	
 	if (signal(SIGINT, _handler) == SIG_ERR)
 	{
@@ -41,7 +52,7 @@ int main(int argc, char *argv[])
 			break;
 		}
 
-		if (_strncmp(line, "exit\n", strlen("exit\n")) == 0)
+		if (strncmp(line, "exit\n", strlen("exit\n")) == 0)
 		{
 			break;
 		}
@@ -57,20 +68,11 @@ int main(int argc, char *argv[])
 				
 	return (EXIT_SUCCESS);
 }
-/**
- * @brief Signal handler for SIGINT (Ctrl+c)
- *
- * @param sig signal number (ignored)
- 
-void _handler(int sig)
-{
-	(void)sig;
 
-	write(STDOUT_FILENO, "\n$ ", 3);
-}**
- * @brief Allocates memory for the environment variable
+**
+ * allocate_memory_for_environ -  Allocates memory for the environment variable
  *
- * Return Return true
+ * Return: Return true
  *
 bool allocate_memory_for_environ(void)
 {
@@ -78,3 +80,29 @@ bool allocate_memory_for_environ(void)
 	return (environ != NULL);
 }
 */
+#include "shell.h"
+
+/**
+ * main - runs a command line interpreter
+ * @argc: argument count
+ * @argv: array of argument strings
+ * Return: 0 on success, or the error code provided by _getline
+ * Description: this function's only purpose is to send the correct executable
+ * name to the rest of the code for error handling
+ */
+int main(int argc, char **argv)
+{
+		(void)argc;
+			signal(SIGINT, _handler);
+				environ = malloc_array(environ);
+					return (_getline(argv[0]));
+}
+/**
+ *  * _handler - prints a new prompt on a newline
+ *   * @sig: ignored input
+ *    */
+void _handler(int sig)
+{
+		(void)sig;
+			write(STDOUT_FILENO, "\n$ ", 3);
+}

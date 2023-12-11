@@ -108,18 +108,19 @@ char *str_concat(char *s1, char *s2)
  * @s2: stirng
  * Return: 0
  */
-int _strcmp(char *s1, char *s2)
+int custom_strcmp(const char *s1, const char *s2, size_t n)
 {
 	if (!s1 || !s2)
 	{
 		return (-1);
 	}
 
-	while (*s1 == *s2 && *s1)
+	while (n > 0 && *s1 && *s2 && *s1 == *s2)
 	{
 		s1++;
 		s2++;
+		n--;
 	}
 
-	return (*s1) - (*s2);
+	return (n == 0) ? 0 : (*s1 - *s2);
 }

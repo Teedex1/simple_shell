@@ -29,7 +29,7 @@ char *generate_error_message(char *argument, char *shell_name, int line_number);
 int print_command_not_found_error(char *argument, char *shell_name, int line_number);
 int switch_string(char **dest, char **source);
 int free_string_array(char **str_array);
-int check_custom_builtin(char **args, char *shell_name, int command_line, int *error_code);
+int builtin_checker(char **args, char *shell, int *errcode);
 void _perror_exit(char *arg, char *shell, int line);
 int env_index(const char *name);
 char *_getenv(const char *name);
@@ -37,27 +37,20 @@ bool allocate_memory_for_environ(void);
 void _handler(int sig);
 void execute_command(char *command);
 char *_strdup(const char *str);
-int _numlen(int n);
+size_t _numlen(int num);
 void free_environ();
-int main(int argc, char *argv[]);
-int _setenv(const char *name, const char *value);
-int _unsetenv(const char *name);
+int main(int argc, char **argv);
 int _printenv(void);
 char *str_concat(char *, char *);
-/**char *_itoa(int, char*, int);*/
 size_t _strlen(const char *s);
-int _strncmp(const char *s1, const char *s2, size_t n);
+int custom_strncmp(const char *s1, const char *s2, size_t n);
 int _printenv(void);
 void *_realloc(void *ptr, size_t old_size, size_t new_size);
 void *_reallocf(void *ptr, size_t old_size, size_t new_size);
 char **malloc_array(char **arr);
 int _setenv(const char *name, const char *value);
 int _unsetenv(const char *name);
-int _strcmp(char *s1, char *s2);
-char *str_concat(char *s1, char *s2);
-/**char *_strcpy(char *dest, char *src);*/
-/**char *_strdup(char *str);*/
-/**int _strlen(const char *str);*/
+char *_strcpy(char *dest, char *src);
 int empty_path(char *path);
 int slash_sps(char *str);
 char *cmd_path(char *cmd, char *path);
@@ -67,7 +60,7 @@ char **strtok_array(const char *str, const char *del);
 int word_counter(const char *str, const char *del);
 int parents_forking(char **args, char *shell, int line);
 void path_checker(char **args);
-void string_switch(char **str1, char **str2);
 void free_array(char **arr);
+int string_switch(char  **prev, char **tmp);
 void perror_notfound(const char *command, const char *shell, int line);
 #endif /* SHELL_H */
