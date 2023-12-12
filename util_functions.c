@@ -8,19 +8,29 @@
  */
 char *generate_error_message(char *argument, char *shell_name, int line_number)
 {
-	char *error_message = NULL;
-	int len_shell = _strlen(shell_name);
-	int len_arg = _strlen(argument);
-	int len_line = _numlen(line_number);
+	char *error_message;
+	int len_shell, len_arg, len_line, total_len;
 
-	int total_len = len_shell + 2 + len_line + len_arg + 1;
+
+	len_shell = _strlen(shell_name);
+	len_arg = _strlen(argument);
+	len_line = _numlen(line_number);
+	
+	total_len = len_shell + 2 + len_line + len_arg + 1;
 
 	error_message = malloc(total_len);
+
+	if (!argument || !shell_name)
+	{
+		return (NULL);
+	}
+
 	if (error_message == NULL)
 	{
 		return (NULL);
 	}
-	sprintf(error_message, "%s:%d: %s: ", shell_name, line_number, argument);
+	
+	snprintf(error_message, total_len, "%s:%d: %s: ", shell_name, line_number, argument);
 
 	return (error_message);
 }
@@ -54,7 +64,11 @@ int print_command_not_found_error(char *argument, char *shell_name, int line_num
 
 	return (0);
 }
-
+/**
+ * _numlen - number length
+ * @num: num
+ * Return: 0
+ */
 size_t _numlen(int num)
 {
 	size_t len = 1;
@@ -65,7 +79,7 @@ size_t _numlen(int num)
 		num = -num;
 	}
 
-	while (num >= 10)
+	while (num >= 0)
 	{
 		len++;
 		num /= 10;

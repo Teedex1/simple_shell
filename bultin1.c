@@ -17,9 +17,10 @@ int builtin_checker(char **args, char *shell, int *errcode)
 	{
 		return (3);
 	}
+	
 	if (strcmp(args[0], "setenv") == 0)
 	{
-		if (!args[1] || _setenv(args[1], args[2]) == -1)
+		if (!args[1] || _setenv(args[1], (const char *)args[2]) == -1 )
 		{
 			perror("setenv");
 			return (3);
@@ -68,6 +69,13 @@ int builtin_checker(char **args, char *shell, int *errcode)
 		}
 		return (2);
 	}
-	return (0);
+	/**return (0);*/
+	for (i = 0; args[i]; ++i)
+	{
+		free(args[i]);
+	}
+	free(args);
+
+	return(0);
 }
 

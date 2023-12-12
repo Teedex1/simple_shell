@@ -1,6 +1,6 @@
 #include "shell.h"
 /**
- * @brief Allocates or reallocates a memory block without freeing the old one.
+ * _reallocates - a memory block without freeing the old one.
  *
  * @param ptr pointer to the previous memory allocation
  * @param old_size - Size, in bytes, of the spaces allocated to ptr.
@@ -16,25 +16,29 @@ void *_realloc(void *ptr, size_t old_size, size_t new_size)
 		free(ptr);
 		return (NULL);
 	}
+	
 	new_ptr = malloc(new_size);
 	if (!new_ptr)
 	{
+		perror("_realloc");
 		return (NULL);
 	}
 
 	if (ptr)
+
 	{
 		memcpy(new_ptr, ptr, (old_size < new_size) ? old_size : new_size);
 		free(ptr);
 	}
+	
 	return (new_ptr);
 }
 /**
- * @brief - Allocates or reallocates a memory block, freeing the old one.
+ * _reallocf - a memory block, freeing the old one.
  *
- * @param ptr: Pointer to the previous memory allocation
- * @param old_size: Size in bytes.
- * @param new_size: size in bytes.
+ * @ptr: Pointer to the previous memory allocation
+ * @old_size: Size in bytes.
+ * @new_size: size in bytes.
  * Return: pointer to the new memory block
  */
 void *_reallocf(void *ptr, size_t old_size, size_t new_size)
@@ -55,9 +59,9 @@ void *_reallocf(void *ptr, size_t old_size, size_t new_size)
 	return (new_ptr);
 }
 /**
- * @brief - Malloc an unmallocated array
+ * malloc - an unmallocated array
  *
- * @param arr: Array input
+ * arr: Array input
  * Return: Pointer to malloc'd array
  */
 char **malloc_array(char **arr)
@@ -84,6 +88,7 @@ char **malloc_array(char **arr)
 	arr = _realloc(arr, sizeof(char *) * (i + 1), sizeof(char *) * (i + 1));
 	if (!arr)
 	{
+		perror("malloc_array");
 		return (NULL);
 	}
 
@@ -108,8 +113,9 @@ int _setenv(const char *name, const char *value)
 		return (-1);
 	}
 
-	if (!value || !value[0] || strchr(name, '='))
+	if (!environ || !name || !value || !value[0] || strchr(name, '='))
 	{
+		perror("_setenv");
 		return (-1);
 	}
 	
@@ -123,6 +129,7 @@ int _setenv(const char *name, const char *value)
 
 		if (!environ[i])
 		{
+			perror("_setenv");
 			return (-1);
 		}
 
@@ -147,11 +154,13 @@ int _setenv(const char *name, const char *value)
 		{
 			return (3);
 		}
+
 		free(environ[i]);
 		environ[i] = malloc(sizeof(char) * size);
 
 		if (!environ[i])
 		{
+			perror("_setenv");
 			return (-1);
 		}
 

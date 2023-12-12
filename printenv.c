@@ -8,7 +8,9 @@ int _printenv(void)
 	int i;
 
 	if(!environ)
+	
 	{
+		perror("environ is NULL");
 		return (-1);
 	}
 

@@ -51,14 +51,14 @@ char *_strdup(const char *str)
  * @src: soruce
  * Return: pointer dest
  */
-char *_strcpy(char *dest, char *src)
+char *_strcpy(char *dest, const char *src)
 {
+	char *original_dest = dest;
+
 	if (!dest || !src)
 	{
 		return (dest);
 	}
-
-	/**char *original_dest = dest;*/
 
 	while (*src)
 	{
@@ -66,7 +66,8 @@ char *_strcpy(char *dest, char *src)
 	}
 
 	*dest = '\0';
-	return (dest);
+
+	return (original_dest);
 }
 
 /**
@@ -77,17 +78,12 @@ char *_strcpy(char *dest, char *src)
  */
 char *str_concat(char *s1, char *s2)
 {
-	size_t len1, len2, total_len;
+
 	char *new_str;
 
-	if (!s1 && !s2)
-	{
-		return (NULL);
-	}
-
-	len1 = (s1) ? _strlen(s1) : 0;
-	len2 = (s2) ? _strlen(s2) : 0;
-	total_len = len1 + len2 + 1;
+	size_t len1 = (s1) ? _strlen(s1) : 0;
+	size_t len2 = (s2) ? _strlen(s2) : 0;
+	size_t total_len = len1 + len2 + 1;
 	
 	new_str = malloc(total_len);
 
@@ -96,9 +92,15 @@ char *str_concat(char *s1, char *s2)
 		return (NULL);
 	}
 
-	strncpy(new_str, s1, len1);
-	strncat(new_str, s2, len2);
-	new_str[total_len - 1] = '\0';
+	if (s1)
+	{
+		strcpy(new_str, s1);
+	}
+
+	if (s2)
+	{
+		strcat(new_str, s2);
+	}
 
 	return (new_str);
 }
@@ -110,6 +112,11 @@ char *str_concat(char *s1, char *s2)
  */
 int custom_strcmp(const char *s1, const char *s2, size_t n)
 {
+	if (!s1 && !s2)
+	{
+		return (0);
+	}
+	
 	if (!s1 || !s2)
 	{
 		return (-1);

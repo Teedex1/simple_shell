@@ -49,19 +49,18 @@ char *cmd_path(char *cmd, char *path)
 	char *buf;
 	struct stat st;
 
-	if (!cmd || !path)
+	if (!cmd || !path || !path[0])
 		return (NULL);
-
-	if (!path[0])
-		return (NULL);
-
+	
 	size = _strlen(cmd) + _strlen(path) + 2;
 	buf = malloc(sizeof(char) * size);
 	if (!buf)
+	{
+
 		return (NULL);
+	}
 
 	snprintf(buf, size, "%s/%s", path, cmd);
-
 
 	if (stat(buf, &st) == 0)
 		return (buf);

@@ -10,7 +10,7 @@ void path_checker(char **args)
 	char *path_env;
 	char **path_tokens;
 	char *cwd_path;
-	char *full_path;
+	char *full_path = NULL;
 
 	cwd_index = empty_path(args[0]);
 
@@ -26,16 +26,21 @@ void path_checker(char **args)
 			if (cwd_path != NULL)
 			{
 				string_switch(&args[0], &cwd_path);
+				free(cwd_path);
 				break;
 			}
 		}
+		
 		full_path = malloc(strlen(path_tokens[i]) + strlen(args[0]) + 2);
+
 		if (full_path == NULL)
 		{
 			perror("Memory alloction error");
-			exit(EXIT_FAILURE);
+			return;
 		}
+		
 		snprintf(full_path, strlen(path_tokens[i]) + strlen(args[0]) + 2, "%s/%s", path_tokens[i], args[0]);
+
 		if (access(full_path, X_OK) == 0)
 		{
 			string_switch(&args[0], &full_path);
@@ -43,6 +48,10 @@ void path_checker(char **args)
 			break;
 		}
 
+		free(full_path);
+	}
+	if (!path_tokens[i])
+	{
 		free(full_path);
 	}
 
@@ -64,7 +73,7 @@ int parent_forking(char **args, char *shell, int line)
 	if (!args)
 		return (0);
 
-	if (stat(args[0], &st) == -1)
+	if (stat(args[0], &st) == -1 || access(args[0], X_OK) == -1)
 		path_checker(args);
 
 	child_pid = fork();
@@ -72,14 +81,14 @@ int parent_forking(char **args, char *shell, int line)
 	if (child_pid == -1)
 	{
 		perror("fork");
-		return (-1);
+		return (EXIT_FAILURE);
 	}
 
 	if (child_pid == 0)
 	{
 		if (stat(args[0], &st) == -1 || access(args[0], X_OK) == -1)
 		{
-			 print_command_not_found_error(args[0], shell, line);
+			print_command_not_found_error(args[0], shell, line);
 			exit(127);
 		}
 
@@ -89,6 +98,7 @@ int parent_forking(char **args, char *shell, int line)
 			exit(127);
 		}
 	}
+	
 	else
 	{
 		wait_status = 0;
@@ -102,6 +112,7 @@ int parent_forking(char **args, char *shell, int line)
 		{
 			fprintf(stderr, "Child process terminated due to signal %d\n", WTERMSIG(wait_status));
 		}
+		
 		else
 		{
 			fprintf(stderr, "Child process terminated unexpectedly\n");
@@ -134,6 +145,7 @@ int word_counter(const char *str, const char *del)
 	}
 
 	free(sdup);
+	
 	return (wordcounter);
 }
 /**
@@ -159,12 +171,15 @@ char **strtok_array(const char *str, const char *del)
 		return (NULL);
 
 	dup = strdup(str);
+	
 	if (!dup)
 	{
 		free(arr);
 		return (NULL);
 	}
+	
 	i = 0;
+
 	token = strtok(dup, del);
 	while (token)
 	{
@@ -193,6 +208,7 @@ char **strtok_array(const char *str, const char *del)
 
 		arr = tmp;
 	}
+	
 	arr[i] = NULL;
 
 	free(dup);
@@ -228,12 +244,21 @@ int _getline(char *shell)
 
 		check_exits = builtin_checker(args, shell, &errcode);
 
+		if (args) {
+			free_array(args);
+			args = NULL;
+		}
+
 		if (check_exits == 2)
 		{
 			check_exits = atoll(args[1]);
-			free_array(args);
-			free_array(environ);
-			free(buf);
+			/**free_array(args);*/
+			/**free_array(environ);*/
+			if (buf)
+			{
+				free(buf);
+				buf = NULL;
+			}
 			return (code_exits);
 		}
 
@@ -244,7 +269,7 @@ int _getline(char *shell)
 
 		free_array(args);
 
-		if (code_exits == 1)
+		if (check_exits == 1)
 		{
 			break;
 		}
@@ -255,8 +280,13 @@ int _getline(char *shell)
 		}
 	}
 	
+	if (buf)
+	{
+		free(buf);
+		buf = NULL;
+	}
+	
 	free_array(environ);
-	free(buf);
 
 	if (isatty(STDIN_FILENO) && check_exits != 1)
 	{
@@ -265,16 +295,22 @@ int _getline(char *shell)
 
 	return (errcode);
 }
+/**
+ * free_array - free the array
+ * @arr: array pointer
+ * Return: 0
+ */
 void free_array(char **arr)
 {
 	size_t i;
 
-	if (!arr)
-		return;
-
-	for (i = 0; arr[i] != NULL; i++)
+	if (arr)
 	{
-		free(arr[i]);
+		for (i = 0; arr[i]; i++)
+		{
+			free(arr[i]);
+			arr[i] = NULL;
+		}
+		free(arr);
 	}
-	free(arr);
 }

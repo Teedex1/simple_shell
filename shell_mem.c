@@ -29,10 +29,11 @@ int free_string_array(char **str_array)
 
 	if (!str_array)
 		return (1);
+	
 	for (i = 0; str_array[i] != NULL; i++)
 	{
 		free(str_array[i]);
-		str_array[i] = NULL;
+
 	}
 
 	free(str_array);

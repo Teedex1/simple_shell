@@ -50,7 +50,7 @@ void *_reallocf(void *ptr, size_t old_size, size_t new_size);
 char **malloc_array(char **arr);
 int _setenv(const char *name, const char *value);
 int _unsetenv(const char *name);
-char *_strcpy(char *dest, char *src);
+char *_strcpy(char *dest, const char *src);
 int empty_path(char *path);
 int slash_sps(char *str);
 char *cmd_path(char *cmd, char *path);
