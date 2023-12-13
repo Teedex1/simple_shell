@@ -131,3 +131,12 @@ int custom_strcmp(const char *s1, const char *s2, size_t n)
 
 	return (n == 0) ? 0 : (*s1 - *s2);
 }
+size_t array_length(char **arr)
+{
+	size_t length = 0;
+	while (arr[length] != NULL)
+	{
+		length++;
+	}
+	return (length);
+}

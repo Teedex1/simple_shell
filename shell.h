@@ -62,5 +62,6 @@ int parents_forking(char **args, char *shell, int line);
 void path_checker(char **args);
 void free_array(char **arr);
 int string_switch(char  **prev, char **tmp);
+size_t array_length(char **arr);
 void perror_notfound(const char *command, const char *shell, int line);
 #endif /* SHELL_H */

@@ -10,7 +10,7 @@ int _printenv(void)
 	if(!environ)
 	
 	{
-		perror("environ is NULL");
+		fprintf(stderr, "Error: environ is NULL\n");
 		return (-1);
 	}
 
@@ -18,7 +18,7 @@ int _printenv(void)
 	{
 		if (write(STDOUT_FILENO, environ[i], _strlen(environ[i])) == -1 || write(STDOUT_FILENO, "\n", 1) == -1)
 		{
-			perror("ERROR writing to STDOUT_FILENO");
+			fprintf(stderr, "ERROR writing to STDOUT_FILENO for environment variable: %s\n", environ[i]);
 			return (-1);
 		}
 	}

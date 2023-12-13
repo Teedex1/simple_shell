@@ -27,7 +27,7 @@ void *_realloc(void *ptr, size_t old_size, size_t new_size)
 	if (ptr)
 
 	{
-		memcpy(new_ptr, ptr, (old_size < new_size) ? old_size : new_size);
+		memcpy(new_ptr, ptr, (old_size < new_size) ? old_size : (old_size + 1));
 		free(ptr);
 	}
 	
@@ -91,6 +91,7 @@ char **malloc_array(char **arr)
 		perror("malloc_array");
 		return (NULL);
 	}
+	arr[i] = NULL;
 
 	return (arr);
 }
@@ -104,14 +105,9 @@ char **malloc_array(char **arr)
 int _setenv(const char *name, const char *value)
 {
 	size_t size = strlen(name) + strlen(value) + 2;
-	size_t start = strlen(name);
+	/**size_t start = strlen(name);*/
 	size_t psize = sizeof(char *);
-	int i, y;
-
-	if (!environ || !name)
-	{
-		return (-1);
-	}
+	int i;
 
 	if (!environ || !name || !value || !value[0] || strchr(name, '='))
 	{
@@ -125,38 +121,35 @@ int _setenv(const char *name, const char *value)
 		{
 		}
 		environ = _reallocf(environ, i * psize, (i + 2) * psize);
-		environ[i] = malloc(sizeof(char) * size);
+		/**environ[i] = malloc(sizeof(char) * size);*/
 
 		if (!environ[i])
 		{
 			perror("_setenv");
 			return (-1);
 		}
-
-		strcpy(environ[i], name);
-		environ[i][start++] = '=';
-
-		for (y = 0; start < size - 1; start++, y++)
+		environ[i] = malloc(sizeof(char) * size);
+		if (!environ[i])
 		{
-			environ[i][start] = value[y];
+			perror("_setenv");
+			return (-1);
 		}
 
-		environ[i][start] = '\0';
+		snprintf(environ[i], size, "%s=%s", name, value);
 		environ[++i] = NULL;
-
-		return (3);
+		return (0);
 	}
+
 	if (_getenv(name) && value[0])
 	{
 		i = env_index(name);
 
 		if (i < 0)
 		{
-			return (3);
+			return (-1);
 		}
 
-		free(environ[i]);
-		environ[i] = malloc(sizeof(char) * size);
+		environ[i] =_realloc(environ[i], strlen(environ[i]) + 1,size);
 
 		if (!environ[i])
 		{
@@ -164,17 +157,9 @@ int _setenv(const char *name, const char *value)
 			return (-1);
 		}
 
-		strcpy(environ[i], name);
-		environ[i][start++] = '=';
-
-		for (y = 0; start < size - 1; start++, y++)
-		{
-			environ[i][start] = value[y];
-		}
-
-		environ[i][start] = '\0';
+		snprintf(environ[i], size, "%s=%s", name, value);
 	}
-
-	return (3);
+	
+	return (0);
 }
 
