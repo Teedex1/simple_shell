@@ -13,11 +13,15 @@ char *cmd_cwd(char *cmd)
 	if (!cmd)
 		return (NULL);
 
-	cwd = getcwd(NULL, 0);
+	cwd = _strdup(getcwd(NULL, 0));
+	if (!cwd)
+		return (NULL);
+
 	if (!cwd)
 		return (NULL);
 	
-	size += _strlen(cmd) + _strlen(cwd) + 2;
+	size = _strlen(cmd) + _strlen(cwd) + 2;
+
 	buf = malloc(sizeof(char) * size);
 	if (!buf)
 	{
@@ -53,6 +57,7 @@ char *cmd_path(char *cmd, char *path)
 		return (NULL);
 	
 	size = _strlen(cmd) + _strlen(path) + 2;
+
 	buf = malloc(sizeof(char) * size);
 	if (!buf)
 	{

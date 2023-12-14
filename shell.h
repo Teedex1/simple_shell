@@ -30,7 +30,7 @@ int print_command_not_found_error(char *argument, char *shell_name, int line_num
 int switch_string(char **dest, char **source);
 int free_string_array(char **str_array);
 int builtin_checker(char **args, char *shell, int *errcode);
-void _perror_exit(char *arg, char *shell, int line);
+int perror_exit(char *arg, char *shell, int line);
 int env_index(const char *name);
 char *_getenv(const char *name);
 bool allocate_memory_for_environ(void);
@@ -63,5 +63,7 @@ void path_checker(char **args);
 void free_array(char **arr);
 int string_switch(char  **prev, char **tmp);
 size_t array_length(char **arr);
+char *_itoa(int n);
+long int _atoli(char *s);
 void perror_notfound(const char *command, const char *shell, int line);
 #endif /* SHELL_H */

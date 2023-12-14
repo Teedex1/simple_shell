@@ -27,7 +27,7 @@ void *_realloc(void *ptr, size_t old_size, size_t new_size)
 	if (ptr)
 
 	{
-		memcpy(new_ptr, ptr, (old_size < new_size) ? old_size : (old_size + 1));
+		memcpy(new_ptr, ptr, (old_size < new_size) ? old_size : new_size);
 		free(ptr);
 	}
 	
@@ -85,12 +85,13 @@ char **malloc_array(char **arr)
 			return (NULL);
 		}
 	}
-	arr = _realloc(arr, sizeof(char *) * (i + 1), sizeof(char *) * (i + 1));
+	arr = _realloc(arr, sizeof(char *) * (i + 1), sizeof(char *) * (i + 2));
 	if (!arr)
 	{
 		perror("malloc_array");
 		return (NULL);
 	}
+
 	arr[i] = NULL;
 
 	return (arr);

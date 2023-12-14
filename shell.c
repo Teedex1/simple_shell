@@ -27,6 +27,7 @@ void path_checker(char **args)
 			{
 				string_switch(&args[0], &cwd_path);
 				free(cwd_path);
+				free(full_path);
 				break;
 			}
 		}
@@ -252,22 +253,26 @@ int _getline(char *shell)
 		if (check_exits == 2)
 		{
 			check_exits = atoll(args[1]);
-			/**free_array(args);*/
-			/**free_array(environ);*/
+
 			if (buf)
 			{
 				free(buf);
 				buf = NULL;
 			}
-			return (code_exits);
+			
+			free_array(environ);
+
+			if(isatty(STDIN_FILENO) && check_exits != 1)
+			{
+				write(STDOUT_FILENO, "\n", 1);
+			}
+			return (check_exits);
 		}
 
 		if (code_exits == 0)
 		{
 			errcode = parent_forking(args, shell, line);
 		}
-
-		free_array(args);
 
 		if (check_exits == 1)
 		{
@@ -287,11 +292,6 @@ int _getline(char *shell)
 	}
 	
 	free_array(environ);
-
-	if (isatty(STDIN_FILENO) && check_exits != 1)
-	{
-		write(STDOUT_FILENO, "\n", 1);
-	}
 
 	return (errcode);
 }

@@ -22,7 +22,8 @@ int builtin_checker(char **args, char *shell, int *errcode)
 	{
 		if (!args[1] || _setenv(args[1], (const char *)args[2]) == -1 )
 		{
-			perror("setenv");
+			perror_exit(args[1], shell, 0);
+			*errcode = 2;
 			return (3);
 		}
 		return (2);
@@ -32,15 +33,18 @@ int builtin_checker(char **args, char *shell, int *errcode)
 	{
 		if (!args[1] || _unsetenv(args[1]) == -1)
 		{
-			perror("unsetenv");
+			perror_exit(args[1], shell, 0);
+			*errcode = 2;
 			return (3);
 		}
 		return (2);
 	}
+
 	if (strcmp(args[0], "env") == 0)
 	{
 		return _printenv();
 	}
+
 	if (strcmp(args[0], "exit") == 0)
 	{
 		if (!args[1])
@@ -59,7 +63,7 @@ int builtin_checker(char **args, char *shell, int *errcode)
 			}
 		}
 		
-		exit_code = strtol(args[1], NULL, 10);
+		exit_code = _atoli(args[1]);
 		if (exit_code > INT_MAX)
 		{
 			snprintf(error_msg, sizeof(error_msg), "%s: exit: Number too large: %s", shell, args[1]);
@@ -69,7 +73,7 @@ int builtin_checker(char **args, char *shell, int *errcode)
 		}
 		return (2);
 	}
-	/**return (0);*/
+
 	for (i = 0; args[i]; ++i)
 	{
 		free(args[i]);
@@ -78,4 +82,17 @@ int builtin_checker(char **args, char *shell, int *errcode)
 
 	return(0);
 }
+int perror_exit(char *arg, char *shell, int line)
+{
+	char *tmp1, *tmp2, *str_line;
 
+	tmp1 = str_concat(shell, ": ");
+	str_line = _itoa(line);
+	tmp2 = str_concat(tmp1, str_line), free(tmp1), free(str_line);
+	tmp1 = str_concat(tmp2, ":  exit: Illegal number: "), free(tmp2);
+	tmp2 = str_concat(tmp1, arg), free(tmp1);
+	tmp1 = str_concat(tmp2, "\n"), free(tmp2);
+	write(STDERR_FILENO, tmp1, _strlen(tmp1));
+	free(tmp1);
+	return (0);
+}
